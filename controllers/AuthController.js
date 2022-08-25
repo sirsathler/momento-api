@@ -23,14 +23,14 @@ exports.login = (req, res, next) => {
         username: userUsername,
         password: userPassword
     }, (err, user) => {
-        if (user == '') {
-            res.status(401).send({
+        if (user == 0) {
+            res.status(401).json({
                 error: 'Login ou senha incorretos!',
                 success: false
             })
             return
         }
-        res.status(200).send({ token: jwt.jwtTokenGenerator(user) })
+        res.status(200).send({ user: user[0], token: jwt.jwtTokenGenerator(user) })
     });
 };
 
