@@ -1,12 +1,13 @@
 const jwtToken = require('jsonwebtoken')
 var mongo = require('mongoose');
 const PostsSchema = require("../models/PostSchema");
+const moment = require('moment');
 
 const Posts = mongo.model('Posts')
 
 exports.getPosts = (req, res) => {
-    if (!req.get('Authorization')) { res.status(403).send({ 'error': 'Você não tem autorização!', success: false }) }
-    const decode = jwtToken.decode(req.get('Authorization'))
+    if (!req.query.token) { res.status(403).send({ 'error': 'Você não tem autorização!', success: false }) }
+    const decode = jwtToken.decode(req.query.token)
     const user = decode.user[0]
 
     Posts.find({
@@ -30,7 +31,12 @@ exports.uploadPost = (req, res) => {
     try {
         const bodyPost = req.body.post
         const post = {
-            'ownerId': bodyPost.ownerId ?? 'Anônimo',
+            'user': {
+                'id': bodyPost.user.id,
+                'username': bodyPost.user.username,
+                'profilePic': bodyPost.user.profilePic
+            },
+            'expiration': moment().add(1, 'd'),
             'postImgURL': bodyPost.postImgURL,
             'postDate': Date(),
             'description': bodyPost.description ?? ''

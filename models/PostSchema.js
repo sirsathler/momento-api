@@ -1,4 +1,5 @@
 // const { default: mongoose } = require('mongoose');
+const moment = require('moment');
 const mongoose = require('mongoose');
 require('mongoose-long')(mongoose);
 var Long = mongoose.Schema.Types.Long;
@@ -8,18 +9,20 @@ const reqString = {
     required: true
 }
 
+// const
+
 const postSchema = new mongoose.Schema({
-    'ownerId': {
-        type: Long,
-        required: true,
+    user: {
+        id: { type: String },
+        username: { type: String },
+        profilePic: { type: String }
     },
-    'postImgURL': reqString,
-    'postDate': {
-        type: Date,
-        default: Date.now(),
+    postImgURL: reqString,
+    expiration: {
+        type: String,
         required: true
     },
-    'description': {
+    description: {
         type: String
     }
 })
