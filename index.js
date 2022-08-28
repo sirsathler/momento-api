@@ -7,6 +7,8 @@ const mongoose = require('mongoose')
 //ROUTES
 const login = require('./routes/Auth');
 const register  = require('./routes/Auth');
+const profile  = require('./routes/Profile');
+const validate  = require('./routes/ValidateToken');
 
 mongoose.Promise = global.Promise
 mongoose.connect("mongodb+srv://matheus:DopKmdQrlSP7ddG6@momento.koyu9.mongodb.net/?retryWrites=true&w=majority").then(()=>{
@@ -23,6 +25,8 @@ app.use(cors());
 
 app.use('/', login);
 app.use('/', register);
+app.use('/', profile);
+app.use('/', validate);
 
 
 app.use('/', (req, res, next) => {
