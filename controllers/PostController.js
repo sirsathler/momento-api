@@ -5,8 +5,8 @@ const PostsSchema = require("../models/PostSchema");
 const Posts = mongo.model('Posts')
 
 exports.getPosts = (req, res) => {
-    if (!req.query.username) { res.status(400).send({ 'error': 'Informações Incompletas!', success: false }) }
-    const decode =  jwtToken.decode( req.get('Authorization'))
+    if (!req.get('Authorization')) { res.status(403).send({ 'error': 'Você não tem autorização!', success: false }) }
+    const decode = jwtToken.decode(req.get('Authorization'))
     const user = decode.user[0]
 
     Posts.find({
@@ -25,5 +25,28 @@ exports.getPosts = (req, res) => {
 }
 
 exports.uploadPost = (req, res) => {
-    
+    if (!req.body.post) { res.status(400).send({ 'error': 'Informações Incompletas!', success: false }) }
+
+    try {
+        const bodyPost = req.body.post
+        const post = {
+            'ownerId': bodyPost.ownerId ?? 'Anônimo',
+            'postImgURL': bodyPost.postImgURL,
+            'postDate': Date(),
+            'description': bodyPost.description ?? ''
+        }
+        const newPost = new Posts(post)
+        newPost.save((err, post) => {
+            if (err) {
+                res.status(500).send(err);
+                return;
+            }
+            res.status(200).json({ post, success: true });
+            return;
+        });
+    }
+    catch (err) {
+        console.log(err)
+        res.status(400).send({ 'error': 'Informações Incompletas!', success: false })
+    }
 }
