@@ -15,3 +15,13 @@ exports.authenticateUser = (req, res, next) => {
         return;
     }
 }
+
+exports.validateToken = (token) => {
+    try {
+        const verified = jwt.verify(token, secret)
+        return verified;
+    }
+    catch (err) {
+        return false;
+    }
+}

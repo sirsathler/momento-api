@@ -2,11 +2,16 @@ const jwtToken = require('jsonwebtoken')
 var mongo = require('mongoose');
 const PostsSchema = require("../models/PostSchema");
 const moment = require('moment');
+const { validateToken } = require('../middlewares/Auth');
 
 const Posts = mongo.model('Posts')
 
 exports.getPosts = (req, res) => {
-    if (!req.query.token) { res.status(403).send({ 'error': 'Você não tem autorização!', success: false }) }
+    if (!req.query.token || !validateToken(req.query.token)) {
+        res.status(403).send({ 'error': 'Você não tem autorização!', success: false })
+        return
+    }
+
     const decode = jwtToken.decode(req.query.token)
     const user = decode.user[0]
 
